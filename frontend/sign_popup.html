@@ -87,7 +87,7 @@
 
     <div class="field">
         <label>Private key (hex):</label>
-        <textarea id="priv" rows="2"></textarea>
+        <textarea id="priv" rows="2">6872288c1ef7c7ff63b75380f3a1bccfb68b56a58dd3c20bbb3b1ac05a1f7564</textarea>
     </div>
 
     <div class="field">
@@ -111,6 +111,21 @@
 </div>
 
 <script>
+// Tự động điền dữ liệu từ URL params khi popup mở
+window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    
+    if (params.has("sender")) {
+        document.getElementById("sender").value = params.get("sender");
+    }
+    if (params.has("receiver")) {
+        document.getElementById("receiver").value = params.get("receiver");
+    }
+    if (params.has("amount")) {
+        document.getElementById("amount").value = params.get("amount");
+    }
+});
+
 async function createSignature() {
     const priv = document.getElementById("priv").value.trim();
     const sender = document.getElementById("sender").value.trim();
@@ -120,7 +135,7 @@ async function createSignature() {
 
     if (!priv || !sender || !receiver || isNaN(amount)) {
         resultEl.className = "error";
-        resultEl.textContent = "Thiếu dữ liệu.";
+        resultEl.textContent = "Vui lòng điền đầy đủ thông tin (đặc biệt là Private key).";
         return;
     }
 
@@ -147,29 +162,36 @@ async function createSignature() {
 
         resultEl.className = "success";
         resultEl.innerHTML = `
+            <b>✓ Chữ ký đã được tạo!</b><br><br>
             <b>Signature:</b><br>${data.signature}<br><br>
             <b>Public key:</b><br>${data.public_key}
         `;
 
-        // Đẩy dữ liệu về form ở index.html (nếu popup được mở từ đó)
+        // Gửi dữ liệu về parent window
         if (window.opener && !window.opener.closed) {
-            const doc = window.opener.document;
-            if (doc.getElementById("txSig")) {
-                doc.getElementById("txSig").value = data.signature;
+            try {
+                // Cập nhật form ở parent window
+                if (window.opener.document.getElementById("txSig")) {
+                    window.opener.document.getElementById("txSig").value = data.signature;
+                }
+                if (window.opener.document.getElementById("txPub")) {
+                    window.opener.document.getElementById("txPub").value = data.public_key;
+                }
+                
+                // Gọi hàm callback nếu có
+                if (typeof window.opener.receiveSignature === 'function') {
+                    window.opener.receiveSignature(data.signature, data.public_key);
+                }
+                
+                // Thông báo và tự động đóng sau 2 giây
+                setTimeout(() => {
+                    if (confirm("Chữ ký đã được điền vào form chính. Đóng cửa sổ này?")) {
+                        window.close();
+                    }
+                }, 1000);
+            } catch (err) {
+                console.error("Không thể cập nhật parent window:", err);
             }
-            if (doc.getElementById("txPub")) {
-                doc.getElementById("txPub").value = data.public_key;
-            }
-            if (doc.getElementById("txSender") && !doc.getElementById("txSender").value) {
-                doc.getElementById("txSender").value = sender;
-            }
-            if (doc.getElementById("txReceiver") && !doc.getElementById("txReceiver").value) {
-                doc.getElementById("txReceiver").value = receiver;
-            }
-            if (doc.getElementById("txAmount") && !doc.getElementById("txAmount").value) {
-                doc.getElementById("txAmount").value = amount;
-            }
-            alert("Đã đưa signature + public key vào form gửi giao dịch.");
         }
     } catch (err) {
         resultEl.className = "error";

@@ -13,10 +13,22 @@ function setMessage(el, text, success = true) {
 // ===============================
 document.getElementById("btnNewWallet").addEventListener("click", async () => {
     const msgEl = document.getElementById("walletMsg");
+    const initialBalance = parseFloat(document.getElementById("initialBalance").value);
+    
+    if (isNaN(initialBalance) || initialBalance < 0) {
+        setMessage(msgEl, "Số dư ban đầu không hợp lệ", false);
+        return;
+    }
+    
     setMessage(msgEl, "Đang tạo ví...", true);
 
     try {
-        const res = await fetch("/wallet/new", { method: "POST" });
+        const res = await fetch("/wallet/new", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ initial_balance: initialBalance })
+        });
+        
         if (!res.ok) throw new Error("HTTP " + res.status);
 
         const data = await res.json();
@@ -24,7 +36,7 @@ document.getElementById("btnNewWallet").addEventListener("click", async () => {
         document.getElementById("walletPub").value = data.public_key;
         document.getElementById("walletPriv").value = data.private_key;
 
-        setMessage(msgEl, "Tạo ví thành công!", true);
+        setMessage(msgEl, `✓ ${data.message}`, true);
     } catch (err) {
         setMessage(msgEl, "Lỗi tạo ví: " + err.message, false);
     }
@@ -54,6 +66,38 @@ document.getElementById("btnCheckBalance").addEventListener("click", async () =>
         setMessage(msgEl, "Lỗi: " + err.message, false);
     }
 });
+
+// ===============================
+// 2.5. MỞ POPUP TẠO CHỮ KÝ
+// ===============================
+document.getElementById("btnOpenSignPopup").addEventListener("click", () => {
+    const sender = document.getElementById("txSender").value.trim();
+    const receiver = document.getElementById("txReceiver").value.trim();
+    const amount = document.getElementById("txAmount").value.trim();
+    
+    // Tạo URL với query parameters để truyền dữ liệu sang popup
+    const params = new URLSearchParams({
+        sender: sender,
+        receiver: receiver,
+        amount: amount
+    });
+    
+    // Mở popup với kích thước phù hợp
+    window.open(
+        `/static/sign_popup.html?${params.toString()}`, 
+        'signPopup', 
+        'width=600,height=700,left=200,top=100'
+    );
+});
+
+// Hàm nhận dữ liệu từ popup (gọi từ popup)
+window.receiveSignature = function(signature, publicKey) {
+    document.getElementById("txSig").value = signature;
+    document.getElementById("txPub").value = publicKey;
+    
+    const msgEl = document.getElementById("txMsg");
+    setMessage(msgEl, "✓ Chữ ký đã được tạo thành công!", true);
+}
 
 // ===============================
 // 3. GỬI GIAO DỊCH
@@ -100,36 +144,7 @@ document.getElementById("btnSendTx").addEventListener("click", async () => {
 });
 
 // ===============================
-// 4. MINE BLOCK
-// ===============================
-document.getElementById("btnMine").addEventListener("click", async () => {
-    const miner = document.getElementById("minerAddress").value.trim();
-    const msgEl = document.getElementById("mineMsg");
-
-    if (!miner) {
-        setMessage(msgEl, "Vui lòng nhập miner address", false);
-        return;
-    }
-
-    setMessage(msgEl, "Đang đào block...", true);
-
-    try {
-        const res = await fetch("/mine/" + miner, { method: "POST" });
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.detail || "Mine failed");
-        }
-
-        const data = await res.json();
-        setMessage(msgEl, "Đào block thành công! Hash: " + data.block.hash, true);
-
-    } catch (err) {
-        setMessage(msgEl, "Đào block thất bại: " + err.message, false);
-    }
-});
-
-// ===============================
-// 5. LOAD BLOCKCHAIN
+// 4. LOAD BLOCKCHAIN
 // ===============================
 document.getElementById("btnLoadChain").addEventListener("click", async () => {
     const infoEl = document.getElementById("chainInfo");

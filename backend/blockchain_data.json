@@ -1,0 +1,95 @@
+{
+  "chain": [
+    {
+      "index": 0,
+      "timestamp": 1763621381.201323,
+      "transactions": [
+        {
+          "sender": "GENESIS",
+          "receiver": "01a31d45447b0ab14da6843208d8967d3c5ea9ae",
+          "amount": 1000.0,
+          "signature": "",
+          "public_key": ""
+        }
+      ],
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "nonce": 202321,
+      "difficulty": 4,
+      "hash": "0000d555baa1163fa580ec2dde13f815e14ef51ad32e97d03d8c79c81673c73c"
+    },
+    {
+      "index": 1,
+      "timestamp": 1763621419.4051292,
+      "transactions": [
+        {
+          "sender": "COINBASE",
+          "receiver": "e0e720e2a401d61f3b998f94eb8f4af14afb0b02",
+          "amount": 7.0,
+          "signature": "",
+          "public_key": ""
+        },
+        {
+          "sender": "01a31d45447b0ab14da6843208d8967d3c5ea9ae",
+          "receiver": "e0e720e2a401d61f3b998f94eb8f4af14afb0b02",
+          "amount": 10.0,
+          "signature": "bed24460171e45904b1481292bdc8936af91eafbbdd37b73df194613021c421724ea0ffea2a3ac0605268ed7b9009c4481ffe0b47333e496182f1ad017265a94",
+          "public_key": "244e16cbf1207a11d7fd0df0d3f9fbf64633a5545b9aadf0e9a893ddd1d4bd5c6fae5deb9c5f27a87f1163dc8be2e70a794c143c8fc9265dd6ec5511b7acf62e"
+        }
+      ],
+      "previous_hash": "0000d555baa1163fa580ec2dde13f815e14ef51ad32e97d03d8c79c81673c73c",
+      "nonce": 96321,
+      "difficulty": 4,
+      "hash": "0000091a23d567295415fb92dece5014f11d0686a5d8c22a56d84e939727faeb"
+    },
+    {
+      "index": 2,
+      "timestamp": 1763621420.4457736,
+      "transactions": [
+        {
+          "sender": "COINBASE",
+          "receiver": "e0e720e2a401d61f3b998f94eb8f4af14afb0b02",
+          "amount": 5.0,
+          "signature": "",
+          "public_key": ""
+        }
+      ],
+      "previous_hash": "0000091a23d567295415fb92dece5014f11d0686a5d8c22a56d84e939727faeb",
+      "nonce": 36951,
+      "difficulty": 4,
+      "hash": "00007b1e46f00e7c6241cd6034d44bcd88e46f58d0be72f43f4e9694fec4f8e5"
+    },
+    {
+      "index": 3,
+      "timestamp": 1763621421.1925254,
+      "transactions": [
+        {
+          "sender": "COINBASE",
+          "receiver": "e0e720e2a401d61f3b998f94eb8f4af14afb0b02",
+          "amount": 1.0,
+          "signature": "",
+          "public_key": ""
+        }
+      ],
+      "previous_hash": "00007b1e46f00e7c6241cd6034d44bcd88e46f58d0be72f43f4e9694fec4f8e5",
+      "nonce": 77656,
+      "difficulty": 4,
+      "hash": "0000be266586c4b70c57f03c99cdfb3569536af40fe3f81dafec820459ec95fb"
+    }
+  ],
+  "mempool": [],
+  "tx_log": [
+    {
+      "status": "SUCCESS",
+      "reason": "Added to mempool",
+      "tx": {
+        "sender": "01a31d45447b0ab14da6843208d8967d3c5ea9ae",
+        "receiver": "e0e720e2a401d61f3b998f94eb8f4af14afb0b02",
+        "amount": 10.0,
+        "signature": "bed24460171e45904b1481292bdc8936af91eafbbdd37b73df194613021c421724ea0ffea2a3ac0605268ed7b9009c4481ffe0b47333e496182f1ad017265a94",
+        "public_key": "244e16cbf1207a11d7fd0df0d3f9fbf64633a5545b9aadf0e9a893ddd1d4bd5c6fae5deb9c5f27a87f1163dc8be2e70a794c143c8fc9265dd6ec5511b7acf62e"
+      },
+      "timestamp": 1763621407.1888568
+    }
+  ],
+  "current_difficulty": 4
+}

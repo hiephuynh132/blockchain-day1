@@ -22,7 +22,7 @@ function shortenAddress(address) {
 }
 
 // ===============================
-// LOAD STATS
+// Load Statistics
 // ===============================
 async function loadStats() {
     const statsData = await fetchJSON("/stats");
@@ -41,12 +41,13 @@ async function calculateWalletDetails() {
 
     const wallets = new Map();
 
-    // Process transactions from blockchain
+    // Duyệt qua tất cả các block và transaction
     chainData.chain.forEach(block => {
         block.transactions.forEach(tx => {
             const sender = tx.sender;
             const receiver = tx.receiver;
 
+            // Bỏ qua GENESIS và COINBASE
             if (sender !== "GENESIS" && sender !== "COINBASE") {
                 if (!wallets.has(sender)) {
                     wallets.set(sender, {
@@ -73,24 +74,9 @@ async function calculateWalletDetails() {
         });
     });
 
-    // Also get all accounts (including those in mempool)
-    const accountsData = await fetchJSON("/accounts");
-    if (accountsData && accountsData.accounts) {
-        accountsData.accounts.forEach(acc => {
-            if (!wallets.has(acc.address)) {
-                wallets.set(acc.address, {
-                    address: acc.address,
-                    balance: 0,
-                    sentCount: 0,
-                    receivedCount: 0
-                });
-            }
-        });
-    }
-
+    // Lấy balance cho từng ví
     const walletArray = Array.from(wallets.values());
     
-    // Get balance for each wallet
     for (const wallet of walletArray) {
         const balanceData = await fetchJSON(`/balance/${wallet.address}`);
         if (balanceData) {
@@ -110,7 +96,7 @@ async function loadBlockchain() {
 
     const chainData = await fetchJSON("/chain");
     if (!chainData || !chainData.chain) {
-        tbody.innerHTML = '<tr><td colspan="8" class="center">Không thể tải blockchain</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Không thể tải blockchain</td></tr>';
         return;
     }
 
@@ -118,6 +104,7 @@ async function loadBlockchain() {
     let rows = "";
 
     blocks.forEach(block => {
+        // Tìm miner từ COINBASE transaction
         let miner = "system";
         const coinbaseTx = block.transactions.find(tx => tx.sender === "COINBASE");
         if (coinbaseTx) {
@@ -126,12 +113,14 @@ async function loadBlockchain() {
             miner = "system";
         }
 
+        // Sample transaction
         let sampleTx = "N/A";
         if (block.transactions.length > 0) {
             const tx = block.transactions[0];
             sampleTx = `${tx.sender}→${tx.receiver}:${tx.amount}`;
         }
 
+        // Format timestamp
         const date = new Date(block.timestamp * 1000);
         const formattedDate = date.toLocaleString('sv-SE', { 
             year: 'numeric', 
@@ -142,6 +131,7 @@ async function loadBlockchain() {
             second: '2-digit'
         }).replace(' ', ' ');
 
+        // Shorten hashes
         const prevHashShort = block.previous_hash.substring(0, 10);
         const hashShort = block.hash.substring(0, 10);
 
@@ -172,30 +162,21 @@ async function loadWallets() {
     const wallets = await calculateWalletDetails();
     
     if (!wallets || wallets.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="center">Chưa có ví nào trong blockchain</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Chưa có ví nào trong blockchain</td></tr>';
         document.getElementById("totalWallets").textContent = "0";
         document.getElementById("totalSupply").textContent = "0";
         return;
     }
 
+    // Sắp xếp theo số dư giảm dần
     wallets.sort((a, b) => b.balance - a.balance);
 
-    // Calculate total supply from all COINBASE rewards (not from wallet balances)
-    const chainData = await fetchJSON("/chain");
-    let totalSupply = 0;
-    if (chainData && chainData.chain) {
-        chainData.chain.forEach(block => {
-            block.transactions.forEach(tx => {
-                if (tx.sender === "COINBASE" || tx.sender === "GENESIS") {
-                    totalSupply += tx.amount;
-                }
-            });
-        });
-    }
-
+    // Tính tổng giá trị
+    const totalSupply = wallets.reduce((sum, w) => sum + w.balance, 0);
     document.getElementById("totalWallets").textContent = formatNumber(wallets.length);
     document.getElementById("totalSupply").textContent = formatNumber(totalSupply.toFixed(2));
 
+    // Render table
     let rows = "";
     wallets.forEach((wallet, index) => {
         const totalTxs = wallet.sentCount + wallet.receivedCount;
@@ -215,76 +196,17 @@ async function loadWallets() {
 }
 
 // ===============================
-// LOAD COINBASE TRANSACTIONS
-// ===============================
-async function loadCoinbase() {
-    const tbody = document.querySelector("#coinbaseTable tbody");
-    tbody.innerHTML = "<tr><td colspan='4'>Đang tải...</td></tr>";
-
-    const data = await fetchJSON("/coinbase");
-    if (!data) {
-        tbody.innerHTML = `<tr><td colspan="4" class="error">Không tải được coinbase transactions</td></tr>`;
-        return;
-    }
-
-    let rows = "";
-    data.coinbase_rewards.forEach(rew => {
-        rows += `
-            <tr>
-                <td>${rew.block_index}</td>
-                <td>${rew.miner}</td>
-                <td>${rew.reward}</td>
-                <td>${new Date(rew.timestamp * 1000).toLocaleString()}</td>
-            </tr>
-        `;
-    });
-
-    tbody.innerHTML = rows || `<tr><td colspan="4">Chưa có block reward nào</td></tr>`;
-}
-
-async function loadTxLog() {
-    const tbody = document.querySelector("#txlogTable tbody");
-    tbody.innerHTML = "<tr><td colspan='6'>Đang tải...</td></tr>";
-
-    const data = await fetchJSON("/txlog");
-    if (!data) {
-        tbody.innerHTML = "<tr><td colspan='6' class='error'>Không tải được lịch sử giao dịch</td></tr>";
-        return;
-    }
-
-    let rows = "";
-    data.txlog.forEach(log => {
-        rows += `
-            <tr>
-                <td>${new Date(log.timestamp * 1000).toLocaleString()}</td>
-                <td>${log.tx.sender}</td>
-                <td>${log.tx.receiver}</td>
-                <td>${log.tx.amount}</td>
-                <td style="color:${log.status === "SUCCESS" ? "green" : "red"};">
-                    ${log.status}
-                </td>
-                <td>${log.reason}</td>
-            </tr>
-        `;
-    });
-
-    tbody.innerHTML = rows || `<tr><td colspan="6">Chưa có giao dịch nào</td></tr>`;
-}
-
-// ===============================
 // Load All Data
 // ===============================
 async function loadAllData() {
     await loadStats();
     await loadBlockchain();
     await loadWallets();
-    await loadCoinbase();
-    await loadTxLog();
 }
 
 // ===============================
-// AUTO LOAD ALL WHEN PAGE OPENS
+// Initialize
 // ===============================
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     loadAllData();
 });

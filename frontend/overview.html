@@ -2,68 +2,125 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Blockchain Overview</title>
+    <title>Blockchain Overview & Explorer</title>
 
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: "Segoe UI", Tahoma, sans-serif;
-            background: #f4f4f7;
+            background: #f5f5f5;
+            color: #333;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1400px;
             margin: auto;
             padding: 20px;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         h1 {
-            text-align: center;
-            margin-top: 10px;
-            color: #333;
+            margin: 0;
+            color: #1e293b;
         }
 
         .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0f172a;
         }
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
         }
 
         h2 {
             margin-top: 0;
-            color: #444;
-            border-left: 5px solid #0078ff;
-            padding-left: 10px;
+            color: #1e293b;
+            margin-bottom: 16px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 12px;
-        }
-
-        th, td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-            font-size: 15px;
+            background: white;
         }
 
         th {
-            background: #fafafa;
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: #334155;
         }
 
         tr:hover {
-            background: #f1f7ff;
+            background: #f8fafc;
         }
 
         .error {
@@ -74,35 +131,156 @@
         .center {
             text-align: center;
         }
+
+        .address-cell {
+            font-family: 'Courier New', monospace;
+            color: #3b82f6;
+            font-size: 12px;
+        }
+
+        .balance-cell {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .tx-count-cell {
+            color: #f59e0b;
+            font-weight: 500;
+        }
+
+        .hash-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .miner-cell {
+            color: #8b5cf6;
+            font-weight: 500;
+        }
+
+        .nonce-cell {
+            color: #6366f1;
+            font-weight: 500;
+        }
+
+        .sample-tx-cell {
+            font-size: 11px;
+            color: #475569;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #059669;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+        }
     </style>
 </head>
 
 <body>
 <div class="container">
-    <h1>📊 Tổng quan Blockchain</h1>
-    <p class="subtitle">Theo dõi block, tài khoản, coinbase reward</p>
-
-    <!-- STATS CARD -->
-    <div class="card">
-        <h2>Thống kê chung</h2>
-        <div id="stats">Đang tải...</div>
+    <div class="header">
+        <div>
+            <h1>⛓️ Blockchain Overview & Explorer</h1>
+            <p class="subtitle">Danh sách các ví và thống kê blockchain</p>
+        </div>
+        <div class="nav-links">
+            <a href="/">← Dashboard</a>
+            <a href="/miner">⛏️ Miner</a>
+            <a href="/tampering">🔐 Tampering Demo</a>
+        </div>
     </div>
 
-    <!-- ACCOUNTS CARD -->
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Tổng số Block</div>
+            <div class="stat-value" id="totalBlocks">-</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tổng số Giao dịch</div>
+            <div class="stat-value" id="totalTxs">-</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tổng số Ví</div>
+            <div class="stat-value" id="totalWallets">-</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tổng giá trị lưu thông</div>
+            <div class="stat-value" id="totalSupply">-</div>
+        </div>
+    </div>
+
+    <!-- Blockchain Table -->
     <div class="card">
-        <h2>Danh sách tài khoản</h2>
-        <table id="accountTable">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>⛓️ Chi tiết Blockchain</h2>
+            <button onclick="loadAllData()">🔄 Làm mới</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="blockchainTable">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Timestamp</th>
+                        <th>Miner</th>
+                        <th>Tx count</th>
+                        <th>Sample Tx</th>
+                        <th>Nonce</th>
+                        <th>Prev Hash (10)</th>
+                        <th>Hash (10)</th>
+                    </tr>
+                </thead>
+                <tbody id="blockchainTableBody">
+                    <tr>
+                        <td colspan="8" class="loading">Đang tải dữ liệu...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Wallets Table -->
+    <div class="card">
+        <h2>📊 Danh sách Ví</h2>
+        <table id="walletsTable">
             <thead>
                 <tr>
-                    <th>Địa chỉ</th>
+                    <th>#</th>
+                    <th>Address</th>
                     <th>Số dư</th>
+                    <th>Số giao dịch gửi</th>
+                    <th>Số giao dịch nhận</th>
+                    <th>Tổng giao dịch</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr><td colspan="2" class="center">Đang tải...</td></tr>
+            <tbody id="walletsTableBody">
+                <tr>
+                    <td colspan="6" class="loading">Đang tải dữ liệu...</td>
+                </tr>
             </tbody>
         </table>
     </div>
+
     <!-- TRANSACTION LOG -->
     <div class="card">
         <h2>📜 Lịch sử giao dịch</h2>
@@ -122,6 +300,7 @@
             </tbody>
         </table>
     </div>
+
     <!-- COINBASE REWARD CARD -->
     <div class="card">
         <h2>⛏ Coinbase Transactions (Reward)</h2>
@@ -142,7 +321,7 @@
 </div>
 
 <!-- Load JS -->
-<script src="/static/overview.js"></script>
+<script src="/static/overview.js?v=2"></script>
 
 </body>
 </html>

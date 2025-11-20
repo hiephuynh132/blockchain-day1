@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain Tampering Demo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .block-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .block-card.valid {
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .block-card.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .block-index {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .block-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-valid {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-invalid {
+            background: #ef4444;
+            color: white;
+        }
+
+        .block-field {
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .block-field label {
+            color: #64748b;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .block-field .value {
+            color: #1e293b;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .hash-compare {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hash-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .hash-label {
+            color: #64748b;
+            min-width: 100px;
+        }
+
+        .hash-value {
+            font-family: 'Courier New', monospace;
+            color: #334155;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .hash-value.mismatch {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .tamper-controls {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tamper-input {
+            width: 100%;
+            padding: 8px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .tamper-button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .tamper-button:hover {
+            background: #d97706;
+        }
+
+        .reset-button {
+            background: #6366f1;
+        }
+
+        .reset-button:hover {
+            background: #4f46e5;
+        }
+
+        .alert-box {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #dc2626;
+        }
+
+        .chain-info {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .chain-info h3 {
+            margin: 0 0 12px 0;
+            color: #1e293b;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .info-value.valid {
+            color: #10b981;
+        }
+
+        .info-value.invalid {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="container">
+        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+            <a href="/" style="color:#3b82f6">← Dashboard</a>
+            <a href="/miner" style="color:#3b82f6">⛏️ Miner</a>
+            <a href="/overview" style="color:#3b82f6">📊 Overview</a>
+        </div>
+        
+        <h1>🔐 Blockchain Tampering Demo</h1>
+        <p class="subtitle">Thử nghiệm sửa đổi dữ liệu blockchain để hiểu tính bất biến</p>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert-box">
+            <div class="alert-title">⚠️ Blockchain Integrity Violated!</div>
+            <div id="alertMessage"></div>
+        </div>
+
+        <!-- Chain Info -->
+        <div class="chain-info">
+            <h3>📊 Trạng thái Blockchain</h3>
+            <div class="info-row">
+                <span class="info-label">Tổng số block:</span>
+                <span class="info-value" id="totalBlocks">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Block đã sửa đổi:</span>
+                <span class="info-value" id="tamperedCount">0</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tính toàn vẹn:</span>
+                <span class="info-value valid" id="integrityStatus">✓ VALID</span>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card">
+            <h2>📖 Hướng dẫn</h2>
+            <p style="line-height: 1.6; color: #94a3b8;">
+                <strong>Blockchain sử dụng hash để đảm bảo tính toàn vẹn:</strong><br>
+                1️⃣ Mỗi block chứa hash của block trước đó (previous_hash)<br>
+                2️⃣ Hash được tính từ toàn bộ dữ liệu block (index, timestamp, transactions, nonce, previous_hash)<br>
+                3️⃣ Nếu sửa bất kỳ dữ liệu nào, hash sẽ thay đổi → chain bị phá vỡ<br>
+                4️⃣ Thử sửa transactions trong block bên dưới để thấy blockchain phát hiện lỗi!
+            </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="card">
+            <button onclick="loadBlockchain()" style="background: #10b981;">
+                🔄 Tải Blockchain
+            </button>
+            <button onclick="validateWithBackend()" style="background: #f59e0b; margin-left: 8px;">
+                🔍 Kiểm tra với Backend API
+            </button>
+            <button onclick="resetAll()" style="background: #6366f1; margin-left: 8px;">
+                ♻️ Reset tất cả
+            </button>
+        </div>
+
+        <!-- Blocks Container -->
+        <div id="blocksContainer">
+            <div class="loading">Nhấn "Tải Blockchain" để bắt đầu...</div>
+        </div>
+
+    </div>
+
+    <script src="/static/tampering.js"></script>
+</body>
+</html>

@@ -7,7 +7,11 @@
 </head>
 <body class="light-theme">
 <div class="container">
-    <a href="/static/overview.html" style="color:#3b82f6">Blockchain Dashboard</a>
+    <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+        <a href="/miner" style="color:#3b82f6">⛏️ Miner</a>
+        <a href="/tampering" style="color:#3b82f6">🔐 Tampering Demo</a>
+        <a href="/overview" style="color:#3b82f6">📊 Overview & Explorer</a>
+    </div>
     <h1>Simple Blockchain</h1>
 
     <!-- API base URL -->
@@ -22,6 +26,16 @@
     <!-- WALLET -->
     <div class="card">
         <h2>1. Tạo ví mới</h2>
+        
+        <div class="field">
+            <label>Số dư ban đầu (từ COINBASE):</label>
+            <input id="initialBalance" type="number" min="0" step="0.1" value="0" 
+                   style="max-width: 150px;">
+            <small style="color: #9ca3af; font-size: 12px; display: block; margin-top: 4px;">
+                Ví mới sẽ nhận số token này từ ví sổ cái COINBASE (mặc định 0)
+            </small>
+        </div>
+        
         <button id="btnNewWallet">Tạo ví</button>
 
         <div class="field">
@@ -34,7 +48,7 @@
         </div>
         <div class="field">
             <label>Private key (DEMO – không dùng thật):</label>
-            <textarea id="walletPriv" rows="2" readonly></textarea>
+            <textarea id="walletPriv" rows="2" readonly ></textarea>
         </div>
 
         <div class="message" id="walletMsg"></div>
@@ -57,7 +71,7 @@
 
         <div class="field">
             <label>Sender (address):</label>
-            <input id="txSender" type="text">
+            <input id="txSender" type="text" value="01a31d45447b0ab14da6843208d8967d3c5ea9ae">
         </div>
         <div class="field">
             <label>Receiver (address):</label>
@@ -71,7 +85,7 @@
             <label>Public key (hex):</label>
             <textarea id="txPub" rows="2"></textarea>
         </div>
-        <button onclick="window.open('/static/sign_popup.html', 'popup', 'width=520,height=650');">
+        <button id="btnOpenSignPopup" style="background: #10b981;">
             Tạo chữ ký
         </button>
         <div class="field">
@@ -83,20 +97,9 @@
         <div class="message" id="txMsg"></div>
     </div>
 
-    <!-- MINING -->
-    <div class="card">
-        <h2>4. Đào block</h2>
-        <div class="field">
-            <label>Địa chỉ nhận reward (miner address):</label>
-            <input id="minerAddress" type="text">
-        </div>
-        <button id="btnMine">Mine /mine</button>
-        <div class="message" id="mineMsg"></div>
-    </div>
-
     <!-- CHAIN VIEW -->
     <div class="card">
-        <h2>5. Xem blockchain</h2>
+        <h2>4. Xem blockchain</h2>
         <button id="btnLoadChain">Tải /chain</button>
         <div id="chainInfo" class="small"></div>
         <pre id="chainJson"></pre>

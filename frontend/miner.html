@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain Miner</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="light-theme">
+    <div class="container">
+        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+            <a href="/" style="color:#3b82f6">← Dashboard</a>
+            <a href="/tampering" style="color:#3b82f6">🔐 Tampering Demo</a>
+            <a href="/overview" style="color:#3b82f6">📊 Overview</a>
+        </div>
+        
+        <h1>⛏️ Blockchain Miner</h1>
+        <p class="subtitle">Cấu hình mining và đào block</p>
+
+        <!-- CONFIG -->
+        <div class="card">
+            <h2>4. Cấu hình Mining</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <!-- Difficulty Box -->
+                <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 15px; color: #f59e0b;">⚙️ Mining Difficulty</h3>
+                    <div class="field" style="margin-bottom: 8px;">
+                        <label style="font-size: 13px; color: #475569;">Độ khó (1-10):</label>
+                        <input id="difficulty" type="number" min="1" max="10" value="4" 
+                               style="font-size: 16px; text-align: center; font-weight: bold;">
+                    </div>
+                    <small style="color: #64748b; font-size: 11px; display: block; margin-bottom: 12px;">
+                        Số lượng số 0 đầu tiên trong hash. Cao hơn = khó hơn.
+                    </small>
+                    <button id="btnUpdateDifficulty" style="background: #f59e0b; width: 100%;">
+                        Cập nhật Difficulty
+                    </button>
+                    <div class="message" id="difficultyMsg"></div>
+                </div>
+
+                <!-- Reward Box -->
+                <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 15px; color: #10b981;">💰 Block Reward</h3>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #64748b;">Min:</label>
+                            <input id="rewardMin" type="number" min="0" max="1000" value="1" 
+                                   style="font-size: 16px; text-align: center; font-weight: bold;">
+                        </div>
+                        <div style="display: flex; align-items: center; padding-top: 20px;">
+                            <span style="color: #475569; font-size: 18px;">→</span>
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; color: #64748b;">Max:</label>
+                            <input id="rewardMax" type="number" min="0" max="1000" value="10" 
+                                   style="font-size: 16px; text-align: center; font-weight: bold;">
+                        </div>
+                    </div>
+                    <small style="color: #64748b; font-size: 11px; display: block; margin-bottom: 12px;">
+                        Miner nhận random từ Min đến Max tokens.
+                    </small>
+                    <button id="btnUpdateReward" style="background: #10b981; width: 100%;">
+                        Cập nhật Reward
+                    </button>
+                    <div class="message" id="rewardMsg"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MINING -->
+        <div class="card">
+            <h2>5. Đào block</h2>
+            <div class="field">
+                <label>Địa chỉ nhận reward (miner address):</label>
+                <input id="minerAddress" type="text" placeholder="Nhập địa chỉ ví của bạn">
+            </div>
+            <button id="btnMine">⛏️ Mine Block</button>
+            <div class="message" id="mineMsg"></div>
+        </div>
+
+        <!-- Mining Stats -->
+        <div class="card">
+            <h2>📊 Thống kê Mining</h2>
+            <div id="miningStats">
+                <p><b>Current Difficulty:</b> <span id="currentDifficulty">-</span></p>
+                <p><b>Reward Range:</b> <span id="currentRewardRange">-</span></p>
+                <p><b>Total Blocks:</b> <span id="totalBlocks">-</span></p>
+                <p><b>Pending Transactions:</b> <span id="pendingTxs">-</span></p>
+            </div>
+            <button onclick="loadMiningStats()" style="background: #6366f1; margin-top: 12px;">
+                🔄 Làm mới thống kê
+            </button>
+        </div>
+
+    </div>
+
+    <script src="/static/miner.js"></script>
+</body>
+</html>
