@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo chữ ký giao dịch</title>
+
+    <style>
+        body {
+            background: #f4f4f7;
+            font-family: "Segoe UI", Tahoma;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .popup {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-left: 5px solid #0078ff;
+            padding-left: 10px;
+            color: #444;
+        }
+
+        .field {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        label { font-size: 14px; color: #444; }
+        textarea, input {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 10px;
+            background: #3b82f6;
+            color: white;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+        }
+        button:hover { background: #2563eb; }
+
+        #result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 13px;
+            word-break: break-all;
+            border: 1px solid #ccc;
+        }
+
+        .error {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+        .success {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+
+<div class="popup">
+    <h2>Tạo chữ ký giao dịch</h2>
+
+    <div class="field">
+        <label>Private key (hex):</label>
+        <textarea id="priv" rows="2"></textarea>
+    </div>
+
+    <div class="field">
+        <label>Sender (address):</label>
+        <input id="sender" type="text">
+    </div>
+
+    <div class="field">
+        <label>Receiver (address):</label>
+        <input id="receiver" type="text">
+    </div>
+
+    <div class="field">
+        <label>Amount:</label>
+        <input id="amount" type="number" step="0.0001">
+    </div>
+
+    <button id="btnSign">Tạo chữ ký</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+async function createSignature() {
+    const priv = document.getElementById("priv").value.trim();
+    const sender = document.getElementById("sender").value.trim();
+    const receiver = document.getElementById("receiver").value.trim();
+    const amount = parseFloat(document.getElementById("amount").value);
+    const resultEl = document.getElementById("result");
+
+    if (!priv || !sender || !receiver || isNaN(amount)) {
+        resultEl.className = "error";
+        resultEl.textContent = "Thiếu dữ liệu.";
+        return;
+    }
+
+    resultEl.className = "";
+    resultEl.textContent = "Đang tạo chữ ký...";
+
+    try {
+        const res = await fetch("/sign", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                private_key: priv,
+                sender,
+                receiver,
+                amount
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || "Sign failed");
+        }
+
+        resultEl.className = "success";
+        resultEl.innerHTML = `
+            <b>Signature:</b><br>${data.signature}<br><br>
+            <b>Public key:</b><br>${data.public_key}
+        `;
+
+        // Đẩy dữ liệu về form ở index.html (nếu popup được mở từ đó)
+        if (window.opener && !window.opener.closed) {
+            const doc = window.opener.document;
+            if (doc.getElementById("txSig")) {
+                doc.getElementById("txSig").value = data.signature;
+            }
+            if (doc.getElementById("txPub")) {
+                doc.getElementById("txPub").value = data.public_key;
+            }
+            if (doc.getElementById("txSender") && !doc.getElementById("txSender").value) {
+                doc.getElementById("txSender").value = sender;
+            }
+            if (doc.getElementById("txReceiver") && !doc.getElementById("txReceiver").value) {
+                doc.getElementById("txReceiver").value = receiver;
+            }
+            if (doc.getElementById("txAmount") && !doc.getElementById("txAmount").value) {
+                doc.getElementById("txAmount").value = amount;
+            }
+            alert("Đã đưa signature + public key vào form gửi giao dịch.");
+        }
+    } catch (err) {
+        resultEl.className = "error";
+        resultEl.textContent = "Lỗi tạo chữ ký: " + err.message;
+    }
+}
+
+document.getElementById("btnSign").addEventListener("click", createSignature);
+</script>
+
+</body>
+</html>

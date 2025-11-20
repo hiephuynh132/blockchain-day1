@@ -1,0 +1,220 @@
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #9ca3af;
+}
+
+.card {
+    background: #111827;
+    padding: 16px 18px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 0 0 1px #00000055;
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #9ca3af;
+}
+
+input, textarea {
+    background: #020617;
+    border: 1px solid #1f2937;
+    color: #e5e7eb;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.message {
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: none;
+}
+
+.msg-success {
+    display: block;
+    background: #065f46;
+    color: #bbf7d0;
+    border: 1px solid #16a34a;
+}
+
+.msg-error {
+    display: block;
+    background: #7f1d1d;
+    color: #fecaca;
+    border: 1px solid #f87171;
+}
+
+.small {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+pre {
+    background: #020617;
+    border-radius: 8px;
+    padding: 8px;
+    max-height: 300px;
+    overflow: auto;
+    font-size: 12px;
+    border: 1px solid #1e293b;
+}
+
+/* ============================================================
+   LIGHT THEME (áp dụng cho index.html khi body có class light-theme)
+   ============================================================ */
+
+.light-theme {
+    background: #f4f4f7;
+    color: #333;
+}
+
+.light-theme .container {
+    max-width: 1100px;
+}
+
+.light-theme h1 {
+    color: #333;
+}
+
+.light-theme .subtitle {
+    color: #666;
+}
+
+/* Card sáng giống overview */
+.light-theme .card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Title trong card */
+.light-theme .card h2 {
+    margin-top: 0;
+    color: #444;
+    font-size: 19px;
+    border-left: 5px solid #0078ff;
+    padding-left: 10px;
+}
+
+/* Label input */
+.light-theme label {
+    font-size: 14px;
+    color: #444;
+}
+
+/* Input + Textarea */
+.light-theme input,
+.light-theme textarea {
+    background: #ffffff;
+    color: #222;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+.light-theme input:focus,
+.light-theme textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+/* Button */
+.light-theme button {
+    background: #3b82f6;
+    color: white;
+    padding: 9px 16px;
+    border-radius: 6px;
+}
+
+.light-theme button:hover {
+    background: #2563eb;
+}
+
+/* Message success / error */
+.light-theme .msg-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #34d399;
+}
+
+.light-theme .msg-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+/* Code area */
+.light-theme pre {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+/* Small text */
+.light-theme .small {
+    color: #666;
+}

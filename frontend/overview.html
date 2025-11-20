@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Blockchain Overview</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: #f4f4f7;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #444;
+            border-left: 5px solid #0078ff;
+            padding-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        th {
+            background: #fafafa;
+        }
+
+        tr:hover {
+            background: #f1f7ff;
+        }
+
+        .error {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>📊 Tổng quan Blockchain</h1>
+    <p class="subtitle">Theo dõi block, tài khoản, coinbase reward</p>
+
+    <!-- STATS CARD -->
+    <div class="card">
+        <h2>Thống kê chung</h2>
+        <div id="stats">Đang tải...</div>
+    </div>
+
+    <!-- ACCOUNTS CARD -->
+    <div class="card">
+        <h2>Danh sách tài khoản</h2>
+        <table id="accountTable">
+            <thead>
+                <tr>
+                    <th>Địa chỉ</th>
+                    <th>Số dư</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="2" class="center">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- TRANSACTION LOG -->
+    <div class="card">
+        <h2>📜 Lịch sử giao dịch</h2>
+        <table id="txlogTable">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Sender</th>
+                    <th>Receiver</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" class="center">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- COINBASE REWARD CARD -->
+    <div class="card">
+        <h2>⛏ Coinbase Transactions (Reward)</h2>
+        <table id="coinbaseTable">
+            <thead>
+                <tr>
+                    <th>Block</th>
+                    <th>Miner</th>
+                    <th>Reward</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4" class="center">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Load JS -->
+<script src="/static/overview.js"></script>
+
+</body>
+</html>
