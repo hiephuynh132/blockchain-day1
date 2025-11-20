@@ -1,3 +1,6 @@
+Cách chạy
+uvicorn blockchain_app:app --reload --port 8000
+
 project/
 │
 ├── backend/
@@ -12,4 +15,4 @@ project/
 │   ├── overview.js             
 │   └── sign_popup.html                
 │
-└── README.md                 
+└── README.md
