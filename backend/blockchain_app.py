@@ -153,13 +153,15 @@ class Blockchain:
 
         for block in self.chain:
             for tx in block.transactions:
-                if tx["sender"] == address:
+                # COINBASE và GENESIS không bị trừ balance (tạo token từ không)
+                if tx["sender"] == address and address not in ["COINBASE", "GENESIS"]:
                     balance -= tx["amount"]
                 if tx["receiver"] == address:
                     balance += tx["amount"]
 
         for tx in self.mempool:
-            if tx["sender"] == address:
+            # COINBASE và GENESIS không bị trừ balance
+            if tx["sender"] == address and address not in ["COINBASE", "GENESIS"]:
                 balance -= tx["amount"]
             if tx["receiver"] == address:
                 balance += tx["amount"]
